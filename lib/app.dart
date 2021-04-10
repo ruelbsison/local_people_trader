@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-//import 'package:responsive_framework/responsive_wrapper.dart';
+import 'package:responsive_framework/responsive_wrapper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 
@@ -28,10 +28,9 @@ class TraderApp extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
     return MaterialApp(
-      /*builder: (context, widget) => ResponsiveWrapper.builder(
+      builder: (context, widget) => ResponsiveWrapper.builder(
         ClampingScrollWrapper.builder(context, widget),
-        defaultScale: true,
-        maxWidth: 1200,
+        maxWidth: 812,
         minWidth: 375,
         defaultName: MOBILE,
         breakpoints: [
@@ -40,8 +39,8 @@ class TraderApp extends StatelessWidget {
           ResponsiveBreakpoint.resize(850, name: TABLET),
           ResponsiveBreakpoint.resize(1080, name: DESKTOP),
         ],
-        // background: Container(color: background)
-      ),*/
+        //mediaQueryData: MediaQueryData(size: Size(375, 812), devicePixelRatio: 3),
+      ),
       title: AppLocalizations().clientAppTitle,
       theme: themeData(AppThemeConfig.lightTheme),
       darkTheme: themeData(AppThemeConfig.darkTheme),
