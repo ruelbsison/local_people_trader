@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -8,42 +7,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 
 import 'package:local_people_core/core.dart';
-//import 'package:local_people_core/splash.dart';
-//import 'package:local_people_core/injection_container.dart' as di;
-
-//import './ui/views/splash_screen.dart';
 import './ui/views/main_screen.dart';
 import 'package:local_people_core/auth.dart';
 import 'package:local_people_core/login.dart';
 import 'ui/router.dart';
 
 class TraderApp extends StatelessWidget {
-  //final _navigatorKey = GlobalKey<NavigatorState>();
-  //NavigatorState get _navigator => _navigatorKey.currentState;
-
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     return MaterialApp(
-      builder: (context, widget) => ResponsiveWrapper.builder(
-        ClampingScrollWrapper.builder(context, widget),
-        maxWidth: 812,
-        minWidth: 375,
-        defaultName: MOBILE,
-        breakpoints: [
-          ResponsiveBreakpoint.autoScale(375, name: MOBILE),
-          ResponsiveBreakpoint.resize(600, name: MOBILE),
-          ResponsiveBreakpoint.resize(850, name: TABLET),
-          ResponsiveBreakpoint.resize(1080, name: DESKTOP),
-        ],
-        //mediaQueryData: MediaQueryData(size: Size(375, 812), devicePixelRatio: 3),
-      ),
       title: AppLocalizations().clientAppTitle,
       theme: themeData(AppThemeConfig.lightTheme),
-      darkTheme: themeData(AppThemeConfig.darkTheme),
+      darkTheme: themeData(AppThemeConfig.clientTheme),
       localizationsDelegates: [
         LocalPeopleLocalizationsDelegate(),
         AppLocalizationsDelegate(),
@@ -53,7 +28,7 @@ class TraderApp extends StatelessWidget {
       ],
       debugShowCheckedModeBanner: false,
       onGenerateRoute: TraderAppRouter.generateRoute,
-      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      /*home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
           if (state is Uninitialized) {
             return LoginScreen();
@@ -66,59 +41,36 @@ class TraderApp extends StatelessWidget {
             child: Center(child: Text('Unhandle State $state')),
           );
         },
+      ),*/
+      home: ResponsiveWrapper.builder(
+        BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            if (state is Uninitialized) {
+              return LoginScreen();
+            } else if (state is Unauthenticated) {
+              return MainScreen();
+            } else if (state is Authenticated) {
+              return MainScreen();
+            }
+            return Container(
+              child: Center(child: Text('Unhandle State $state')),
+            );
+          },
+        ),
+        defaultScale: true,
+        maxWidth: 896,
+        minWidth: 414,
+        // maxWidth: 812,
+        // minWidth: 375,
+        defaultName: MOBILE,
+        breakpoints: [
+          ResponsiveBreakpoint.autoScale(375, name: MOBILE),
+          ResponsiveBreakpoint.autoScale(600, name: MOBILE),
+          ResponsiveBreakpoint.resize(850, name: TABLET),
+          ResponsiveBreakpoint.resize(1080, name: DESKTOP),
+        ],
+        //mediaQueryData: MediaQueryData(size: Size(375, 812), devicePixelRatio: 3),
       ),
-      /*BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-          if (state is Uninitialized) {
-            return LoginScreen();
-          } else if (state is Unauthenticated) {
-            return MainScreen();
-          } else if (state is Authenticated) {
-            return MainScreen();
-          }
-          return Container(
-            child: Center(child: Text('Unhandle State $state')),
-          );
-        },
-      ),*/
-      /*builder: (context, widget) => BlocProvider (
-        create: (context) => SplashBloc(),
-        child: BlocListener<SplashBloc, SplashState>(
-                listener: (context, state) {
-                  if (state is SplashStateCompleted) {
-                    _navigator.pushAndRemoveUntil<void>(
-                      LoginScreen.route(), (route) => false,
-                    );
-                  }
-                },
-            ),
-      ),*/
-      /*builder: (context, widget) => BlocConsumer<SplashBloc, SplashState>(
-        listenWhen: (previous, current) {
-          if (previous is SplashStateStarted && current is SplashStateCompleted) {
-            return true;
-          }
-          return false;
-        },
-        listener: (context, state) {
-          if (state is SplashStateCompleted) {
-            Navigator.pop(context);
-            AppRouter.pushPageReplacement(context, LoginScreen());
-          }
-        },
-        buildWhen: (previous, current) {
-          if (previous is SplashStateStarted && current is SplashStateCompleted) {
-            return true;
-          }
-          return false;
-        },
-        builder: (context, state) {
-          _navigator.pushAndRemoveUntil<void>(
-            LoginScreen.route(),
-                (route) => false,
-          );
-        },
-      ),*/
     );
   }
 

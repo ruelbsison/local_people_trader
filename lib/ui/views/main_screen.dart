@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:local_people_core/core.dart';
-import 'package:intl/intl.dart';
 
 import 'home_trader.dart';
-import 'schedule_screen.dart';
-import 'opportunities_screen.dart';
 import 'search_screen.dart';
-import 'message_screen.dart';
 import 'more_screen.dart';
+import 'package:local_people_core/messages.dart';
+import 'package:local_people_core/jobs.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -30,9 +28,9 @@ class _MainScreenState extends State<MainScreen> {
           onPageChanged: onPageChanged,
           children: <Widget>[
             TraderHomeScreen(),
-            OpportunitiesScreen(),
+            JobScreen(),
             SearchScreen(),
-            MessageScreen(),
+            MessageBoxScreen(),
             MoreScreen(),
           ],
         ),

@@ -35,6 +35,15 @@ dependencies:
   # device_preview: ^0.5.5
   uuid: ^3.0.1
   responsive_framework: 0.0.15
+  flutter_svg: any
+  # split_view: ^2.0.1
+  google_maps_flutter: ^1.2.0
+  location: ^2.3.5
+  flutter_polyline_points: ^0.1.0
+  # flutter_tagging: ^3.0.0
+  # flutter_search_bar: ^2.1.0
+  # flappy_search_bar_fork: ^1.7.4
+  cached_network_image: ^2.2.0+1
 
   # Local people modules
   local_people_core:

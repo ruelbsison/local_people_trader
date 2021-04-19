@@ -5,11 +5,12 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  TraderApp.initSystemDefault();
+  //TraderApp.initSystemDefault();
   TraderApp.setupLogging();
   runApp(
     AppConfig(
       appName: AppLocalizations().traderAppTitle,
+      appType: AppType.TRADER,
       debugTag: true,
       flavorName: "dev",
       // initialRoute: AppRouter.SPLASH,
