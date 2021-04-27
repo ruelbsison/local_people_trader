@@ -14,7 +14,7 @@ void main() async {
       debugTag: true,
       flavorName: "dev",
       // initialRoute: AppRouter.SPLASH,
-      child: TraderApp.runWidget(),
+      child: TraderApp.runWidget(AppType.TRADER),
     ),
   );
 }

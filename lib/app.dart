@@ -6,10 +6,11 @@ import 'package:responsive_framework/responsive_wrapper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 
+import 'package:local_people_core/jobs.dart';
 import 'package:local_people_core/core.dart';
-import './ui/views/main_screen.dart';
 import 'package:local_people_core/auth.dart';
 import 'package:local_people_core/login.dart';
+import './ui/views/main_screen.dart';
 import 'ui/router.dart';
 
 class TraderApp extends StatelessWidget {
@@ -17,8 +18,10 @@ class TraderApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: AppLocalizations().clientAppTitle,
-      theme: themeData(Theme.of(context), AppThemeConfig.clientTheme),
-      darkTheme: themeData(Theme.of(context), AppThemeConfig.lightTheme),
+      theme: AppThemeConfig().kLocalPeopleClientTheme, //themeData(Theme.of(context), AppThemeConfig.clientTheme),
+      darkTheme: AppThemeConfig().kLocalPeopleTraderTheme, //themeData(Theme.of(context), AppThemeConfig.lightTheme),
+      themeMode: ThemeMode.dark,
+      //fontFamily: 'RedHatDisplay',
       localizationsDelegates: [
         LocalPeopleLocalizationsDelegate(),
         AppLocalizationsDelegate(),
@@ -60,8 +63,10 @@ class TraderApp extends StatelessWidget {
         defaultScale: true,
         //maxWidth: 896,
         //minWidth: 414,
-        maxWidth: 812,
-        minWidth: 375,
+        //maxWidth: 812,
+        //minWidth: 375,
+        maxWidth: 2436,
+        minWidth: 1125,
         defaultName: MOBILE,
         breakpoints: [
           ResponsiveBreakpoint.autoScale(375, name: MOBILE),
@@ -106,19 +111,38 @@ class TraderApp extends StatelessWidget {
     });
   }
 
-  static Widget runWidget() {
+  static Widget runWidget(AppType appType) {
 
     //return TraderApp();
     //final UserRepository userRepository = UserRepositoryImpl();
+    AuthLocalDataSource authLocalDataSource = AuthLocalDataSourceImpl(
+      authorizationConfig: AuthorizationConfig.devClientAuthorizationConfig(),
+    );
+    AuthenticationDataSource authenticationDataSource = AuthenticationDataSourceImpl(
+      authorizationConfig: AuthorizationConfig.devClientAuthorizationConfig(),
+    );
+    JobRemoteDataSource jobRemoteDataSource = JobRemoteDataSourceImpl(RestAPIConfig().baseURL);
+    TagRemoteDataSource tagRemoteDataSource = TagRemoteDataSourceImpl(RestAPIConfig().baseURL);
+    LocationRemoteDataSource locationRemoteDataSource = LocationRemoteDataSourceImpl(RestAPIConfig().baseURL);
+
     final AuthenticationRepository authenticationRepository =
     AuthenticationRepositoryImpl(
-      authLocalDataSource: AuthLocalDataSourceImpl(
-          authorizationConfig: AuthorizationConfig.devClientAuthorizationConfig()),
+      authLocalDataSource: authLocalDataSource,
+      authenticationDataSource: authenticationDataSource,
     );
+
+    JobRepository jobRepository = JobRepositoryImpl(
+        authLocalDataSource: authLocalDataSource,
+        jobRemoteDataSource: jobRemoteDataSource
+    );
+
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthenticationRepository>(
-            create: (context) => authenticationRepository,
+          create: (context) => authenticationRepository,
+        ),
+        RepositoryProvider<JobRepository>(
+          create: (context) => jobRepository,
         ),
       ],
       child: MultiBlocProvider(
@@ -128,8 +152,15 @@ class TraderApp extends StatelessWidget {
           ),*/
           BlocProvider(
             create: (context) =>
-            AuthenticationBloc(authenticationRepository: authenticationRepository)
+            AuthenticationBloc(
+                authenticationRepository: authenticationRepository)
               ..add(AppStarted()),
+          ),
+          BlocProvider(
+            create: (context) => JobBloc(
+                jobRepository: jobRepository,
+                appType: appType
+            ),
           ),
         ],
         child: TraderApp(),
