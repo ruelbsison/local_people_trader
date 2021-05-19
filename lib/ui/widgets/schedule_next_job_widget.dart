@@ -21,7 +21,16 @@ class _ScheduleNextJobWidgetState extends State<ScheduleNextJobWidget> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final Size size = MediaQuery.of(context).size;
-    return BoxContainerWidget (
+    return Container(
+      margin: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(255, 255, 255, 1),
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      //color: Colors.white,
+      //padding: EdgeInsets.all(kDefaultPadding),
+      padding: const EdgeInsets.symmetric(
+          horizontal: kDefaultPadding, vertical: kDefaultPadding * 0.75),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[

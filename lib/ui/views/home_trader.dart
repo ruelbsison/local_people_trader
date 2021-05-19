@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:local_people_core/core.dart';
 import '../widgets/schedule_next_job_widget.dart';
 import '../widgets/dashboard_card.dart';
-//import 'package:intl/intl.dart';
-//import '../,,/../../opportunity/ui/views/opportunity_screen.dart';
-//import '../,,/../../opportunity/ui/views/opportunity_request_screen.dart';
 import 'package:local_people_core/jobs.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:local_people_core/profile.dart';
 
 class TraderHomeScreen extends StatefulWidget {
   @override
@@ -22,29 +21,33 @@ class _TraderHomeScreenState extends State<TraderHomeScreen> {
   Widget build(BuildContext context) {
     final headline6Style = Theme.of(context).textTheme.headline6;
     return Scaffold(
-      appBar: AppBarWidget(
-        appBarPreferredSize: Size.fromHeight(70.0),
-        title: Text(
-          AppLocalizations.of(context).appTitle,
-        ),
-        subTitle: DateFormatUtil.getFormattedDate(),
-        appBar: AppBar(),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
-          child: Container(
-            height: 1.0,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(
-                bottom: BorderSide(
-                  color: Color.fromRGBO(186, 207, 216, 1),
-                ),
+      appBar: buildAppBar(),
+      body: buildBody(),
+    );
+  }
+
+  AppBarWidget buildAppBar() {
+    return AppBarWidget(
+      //appBarPreferredSize: Size.fromHeight(188.0),
+      title: Text(
+        AppLocalizations.of(context).appTitle,
+      ),
+      subTitle: DateFormatUtil.getFormattedDate(),
+      appBar: AppBar(),
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(1.0),
+        child: Container(
+          height: 1.0,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(
+              bottom: BorderSide(
+                color: Color.fromRGBO(186, 207, 216, 1),
               ),
             ),
           ),
         ),
       ),
-      body: buildBody(context),
     );
   }
 
@@ -65,10 +68,33 @@ class _TraderHomeScreenState extends State<TraderHomeScreen> {
     );
   }
 
-  Widget buildBody(BuildContext context) {
+  Widget buildBody() { //BuildContext context) {
+    return BlocListener<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state is ProfileDoesNotExists) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(content: Text('Creating Profile...')),
+            );
+          BlocProvider.of<ProfileBloc>(context).add(ProfileCreateEvent(profile: state.profile));
+        } else if (state is ProfileCreated) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          AppRouter.pushPage(context, ProfileScreen(profile: state.profile,));
+        } else if (state is ProfileCreateFailed) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        } else if (state is TraderProfileLoaded) {
+        }
+      },
+      child: _buildBodyContent(context),
+    );
+  }
+
+  Widget _buildBodyContent(BuildContext context) {
     //final textTheme = Theme.of(context).textTheme;
     //return RefreshIndicator(
     //  onRefresh: () => homeProvider.getFeeds(),
+    BlocProvider.of<ProfileBloc>(context).add(ProfileGetEvent());
     return SafeArea (
         /*child: RefreshIndicator(
             onRefresh: () async{

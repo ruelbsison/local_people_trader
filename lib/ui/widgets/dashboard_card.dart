@@ -23,10 +23,20 @@ class _DashboardCardState extends State<DashboardCard> {
           if (widget.onPressedDashboard != null)
             widget.onPressedDashboard();
         },
-      child: BoxContainerWidget (
+      child: Container(
           height: 171,
           width: size.width,
-          //width: ((size.width - 40) / 2),
+          //margin: EdgeInsets.all(8.0),
+          margin: EdgeInsets.only(left: 12.0, right: 12.0),
+          padding: EdgeInsets.all(12.0),
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(255, 255, 255, 1),
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          //color: Colors.white,
+          //padding: EdgeInsets.all(kDefaultPadding),
+          //padding: const EdgeInsets.symmetric(
+          //    horizontal: kDefaultPadding, vertical: kDefaultPadding * 0.75),
           child: Flex (
             direction: Axis.vertical,
             crossAxisAlignment: CrossAxisAlignment.stretch,
