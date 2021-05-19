@@ -6,7 +6,7 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(
-        appBarPreferredSize: Size.fromHeight(80.0),
+        //appBarPreferredSize: Size.fromHeight(80.0),
         title: Text(
           AppLocalizations.of(context).appTitle,
         ),
