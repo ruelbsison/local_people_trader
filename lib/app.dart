@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_wrapper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 
 import 'package:local_people_core/core.dart';
 import 'package:local_people_core/login.dart';
@@ -118,48 +119,61 @@ class TraderApp extends StatelessWidget {
 
   static Widget runWidget(AppType appType) {
 
+    DataConnectionChecker dataConnectionChecker = DataConnectionChecker();
+    NetworkInfoImpl networkInfo = NetworkInfoImpl(dataConnectionChecker: dataConnectionChecker);
     //return TraderApp();
     //final UserRepository userRepository = UserRepositoryImpl();
     AuthLocalDataSource authLocalDataSource = AuthLocalDataSourceImpl(
-      authorizationConfig: AuthorizationConfig.prodTraderAuthorizationConfig(),
+      authorizationConfig: AuthorizationConfig.prodClientAuthorizationConfig(),
     );
     RestClientInterceptor restClientInterceptor = RestClientInterceptor(
       authLocalDataSource: authLocalDataSource,
     );
     AuthenticationDataSource authenticationDataSource = AuthenticationDataSourceImpl(
-     authorizationConfig: AuthorizationConfig.prodTraderAuthorizationConfig(),
+      authorizationConfig: AuthorizationConfig.prodClientAuthorizationConfig(),
     );
     // AuthenticationDataSource authenticationDataSource = AuthenticationDataSourceByPass(
-    //   authorizationConfig: AuthorizationConfig.devClientAuthorizationConfig(),
+    //   authorizationConfig: AuthorizationConfig.prodClientAuthorizationConfig(),
     // );
+    ClientRestApiClient clientRestApiClient = ClientRestApiClient(
+      restClientInterceptor.dio,
+      baseUrl: RestAPIConfig().baseURL,
+    );
+    TraderRestApiClient traderRestApiClient = TraderRestApiClient(
+      restClientInterceptor.dio,
+      baseUrl: RestAPIConfig().baseURL,
+    );
     ClientRemoteDataSource clientRemoteDataSource = ClientRemoteDataSourceImpl(
-        dio: restClientInterceptor.dio,
-        baseUrl: RestAPIConfig().baseURL);
+      clientRestApiClient: clientRestApiClient,
+    );
     TraderRemoteDataSource traderRemoteDataSource = TraderRemoteDataSourceImpl(
+      traderRestApiClient: traderRestApiClient,
+    );
 
-
-
-
-
-
-
-         baseUrl: RestAPIConfig().baseURL);
-    JobRemoteDataSource jobRemoteDataSource = JobRemoteDataSourceImpl(RestAPIConfig().baseURL);
-    TagRemoteDataSource tagRemoteDataSource = TagRemoteDataSourceImpl(RestAPIConfig().baseURL);
-    LocationRemoteDataSource locationRemoteDataSource = LocationRemoteDataSourceImpl(RestAPIConfig().baseURL);
+    JobRestApiClient jobRestApiClient = JobRestApiClient(
+      restClientInterceptor.dio,
+      baseUrl: RestAPIConfig().baseURL,
+    );
+    JobRemoteDataSource jobRemoteDataSource = JobRemoteDataSourceImpl(
+      jobRestApiClient: jobRestApiClient,
+    );
+    //TagRemoteDataSource tagRemoteDataSource = TagRemoteDataSourceImpl(RestAPIConfig().baseURL);
+    //LocationRemoteDataSource locationRemoteDataSource = LocationRemoteDataSourceImpl(RestAPIConfig().baseURL);
 
     final AuthenticationRepository authenticationRepository =
     AuthenticationRepositoryImpl(
+      networkInfo: networkInfo,
       authenticationDataSource: authenticationDataSource,
     );
 
     final ProfileRepository profileRepository = ProfileRepositoryImpl(
+        networkInfo: networkInfo,
         clientRemoteDataSource: clientRemoteDataSource,
         traderRemoteDataSource: traderRemoteDataSource
     );
 
-    JobRepository jobRepository = JobRepositoryImpl(
-        authLocalDataSource: authLocalDataSource,
+    final JobRepository jobRepository = JobRepositoryImpl(
+        networkInfo: networkInfo,
         jobRemoteDataSource: jobRemoteDataSource
     );
 
