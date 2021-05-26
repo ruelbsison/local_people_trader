@@ -69,24 +69,27 @@ class _TraderHomeScreenState extends State<TraderHomeScreen> {
   }
 
   Widget buildBody() { //BuildContext context) {
-    return BlocListener<ProfileBloc, ProfileState>(
-      listener: (context, state) {
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
         if (state is ProfileDoesNotExists) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(content: Text('Creating Profile...')),
-            );
-          BlocProvider.of<ProfileBloc>(context).add(ProfileCreateEvent(profile: state.profile));
+          context.read<ProfileBloc>().add(ProfileCreateEvent());
+          return LoadingWidget();
+        } if (state is ProfileCreating) {
+          return LoadingWidget();
+        } else if (state is ProfileLoading) {
+          return LoadingWidget();
         } else if (state is ProfileCreated) {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
           AppRouter.pushPage(context, ProfileScreen(profile: state.profile,));
+          return _buildBodyContent(context);
         } else if (state is ProfileCreateFailed) {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          return ErrorWidget(state.toString());
+        } else if (state is ProfileNotLoaded) {
+          return ErrorWidget(state.toString());
         } else if (state is TraderProfileLoaded) {
+          return _buildBodyContent(context);
         }
+        return ErrorWidget('Unhandle State $state');
       },
-      child: _buildBodyContent(context),
     );
   }
 
@@ -96,10 +99,6 @@ class _TraderHomeScreenState extends State<TraderHomeScreen> {
     //  onRefresh: () => homeProvider.getFeeds(),
     BlocProvider.of<ProfileBloc>(context).add(ProfileGetEvent());
     return SafeArea (
-        /*child: RefreshIndicator(
-            onRefresh: () async{
-          BlocProvider.of<HomeBloc>(context).add(RefreshHome());
-        },*/
       child: ListView(
         shrinkWrap: true,
         physics: BouncingScrollPhysics(),
@@ -109,8 +108,8 @@ class _TraderHomeScreenState extends State<TraderHomeScreen> {
           _buildSectionTitle(context, 'Your Next Job'),
           SizedBox(height: 10.0),
           ScheduleNextJobWidget(
-            jobName: 'Job Name / Description ',
-            jobAddress: 'Job Address line 1, Job Address line 2,\nPost code ',
+            //jobName: 'Job Name / Description ',
+            //jobAddress: 'Job Address line 1, Job Address line 2,\nPost code ',
             jobMessage: 'You need to leave in 10 minutes ',
             onPressedNextJob: (String item) {
               AppRouter.pushPage(context, JobScreen());

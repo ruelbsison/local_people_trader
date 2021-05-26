@@ -15,6 +15,7 @@ import 'package:local_people_core/jobs.dart';
 import 'package:local_people_core/messages.dart';
 import './ui/views/main_screen.dart';
 import 'ui/router.dart';
+import'dart:io' show Platform;
 
 class TraderApp extends StatelessWidget {
   @override
@@ -130,8 +131,15 @@ class TraderApp extends StatelessWidget {
     RestClientInterceptor restClientInterceptor = RestClientInterceptor(
       authLocalDataSource: authLocalDataSource,
     );
+    AuthorizationConfig authorizationConfig;
+    if (Platform.isIOS == true) {
+      authorizationConfig = AuthorizationConfig.prodIOSTraderAuthorizationConfig();
+    }
+    if (Platform.isAndroid == true) {
+      authorizationConfig = AuthorizationConfig.prodTraderAuthorizationConfig();
+    }
     AuthenticationDataSource authenticationDataSource = AuthenticationDataSourceImpl(
-      authorizationConfig: AuthorizationConfig.prodClientAuthorizationConfig(),
+      authorizationConfig: authorizationConfig,
     );
     // AuthenticationDataSource authenticationDataSource = AuthenticationDataSourceByPass(
     //   authorizationConfig: AuthorizationConfig.prodClientAuthorizationConfig(),
@@ -277,6 +285,13 @@ class TraderApp extends StatelessWidget {
           BlocProvider(
             create: (context) => JobFormBloc(
                 jobRepository: jobRepository
+            ),
+          ),
+          BlocProvider(
+            create: (context) => MessageBloc(
+              messageRepository: messageRepository,
+              appType: appType,
+              authLocalDataSource: authLocalDataSource,
             ),
           ),
         ],

@@ -23,16 +23,22 @@ class _DashboardCardState extends State<DashboardCard> {
           if (widget.onPressedDashboard != null)
             widget.onPressedDashboard();
         },
-      child: Container(
+        child: Card(
+          elevation: 2,
+          color: Color.fromRGBO(255, 255, 255, 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+        child: Container(
           height: 171,
           width: size.width,
           //margin: EdgeInsets.all(8.0),
           margin: EdgeInsets.only(left: 12.0, right: 12.0),
           padding: EdgeInsets.all(12.0),
-          decoration: BoxDecoration(
-            color: Color.fromRGBO(255, 255, 255, 1),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
+          // decoration: BoxDecoration(
+          //   color: Color.fromRGBO(255, 255, 255, 1),
+          //   borderRadius: BorderRadius.circular(5.0),
+          // ),
           //color: Colors.white,
           //padding: EdgeInsets.all(kDefaultPadding),
           //padding: const EdgeInsets.symmetric(
@@ -46,7 +52,7 @@ class _DashboardCardState extends State<DashboardCard> {
                 child: Text(
                   widget.message,
                   textAlign: TextAlign.left,
-                  style: textTheme.bodyText1,
+                  style: textTheme.subtitle1,
                   //color: Color.fromRGBO(1, 43, 58, 1),
                 ),
               ),
@@ -54,12 +60,7 @@ class _DashboardCardState extends State<DashboardCard> {
                 child: Text(
                   widget.title,
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontFamily: 'RedHatDisplay',
-                    color: Color.fromRGBO(255, 255, 255, 1),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: textTheme.bodyText1,
                 ),
                 onPressed: () {
                   if (widget.onPressedDashboard != null)
@@ -68,6 +69,7 @@ class _DashboardCardState extends State<DashboardCard> {
               ),
             ],
           )
+      ),
       ),
     );
   }
