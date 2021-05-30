@@ -288,6 +288,13 @@ class TraderApp extends StatelessWidget {
             ),
           ),
           BlocProvider(
+            create: (context) => MessageBoxBloc(
+              messageRepository: messageRepository,
+              appType: appType,
+              authLocalDataSource: authLocalDataSource,
+            ),
+          ),
+          BlocProvider(
             create: (context) => MessageBloc(
               messageRepository: messageRepository,
               appType: appType,
