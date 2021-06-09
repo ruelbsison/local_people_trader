@@ -24,7 +24,7 @@ class _DashboardCardState extends State<DashboardCard> {
             widget.onPressedDashboard();
         },
         child: Card(
-          elevation: 2,
+          //elevation: 2,
           color: Color.fromRGBO(255, 255, 255, 1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5.0),
@@ -60,7 +60,7 @@ class _DashboardCardState extends State<DashboardCard> {
                 child: Text(
                   widget.title,
                   textAlign: TextAlign.left,
-                  style: textTheme.bodyText1,
+                  style: textTheme.button.copyWith(color: Color.fromRGBO(255, 255, 255, 1),),
                 ),
                 onPressed: () {
                   if (widget.onPressedDashboard != null)

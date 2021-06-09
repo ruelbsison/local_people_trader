@@ -6,6 +6,7 @@ import 'package:responsive_framework/responsive_wrapper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+//import 'package:provider/provider.dart';
 
 import 'package:local_people_core/core.dart';
 import 'package:local_people_core/login.dart';
@@ -55,10 +56,10 @@ class TraderApp extends StatelessWidget {
             if (state is Uninitialized) {
               return LoginScreen();
             } else if (state is Unauthenticated) {
-              context.bloc<AuthenticationBloc>().add(AuthenticateUser());
+              context.read<AuthenticationBloc>().add(AuthenticateUser());
               return LoginScreen();
             } else if (state is ReAuthenticate) {
-              context.bloc<AuthenticationBloc>().add(ReAuthenticateUser());
+              context.read<AuthenticationBloc>().add(ReAuthenticateUser());
               return LoginScreen();
             } else if (state is Authenticated) {
               return MainScreen();
@@ -71,10 +72,10 @@ class TraderApp extends StatelessWidget {
         defaultScale: true,
         //maxWidth: 896,
         //minWidth: 414,
-        maxWidth: 812,
-        minWidth: 375,
-        //maxWidth: 2436,
-        //minWidth: 1125,
+        //maxWidth: 812,
+        //minWidth: 375,
+        maxWidth: 2436,
+        minWidth: 1125,
         defaultName: MOBILE,
         breakpoints: [
           ResponsiveBreakpoint.autoScale(375, name: MOBILE),
@@ -125,12 +126,9 @@ class TraderApp extends StatelessWidget {
     NetworkInfoImpl networkInfo = NetworkInfoImpl(dataConnectionChecker: dataConnectionChecker);
     //return TraderApp();
     //final UserRepository userRepository = UserRepositoryImpl();
-    AuthLocalDataSource authLocalDataSource = AuthLocalDataSourceImpl(
-      authorizationConfig: AuthorizationConfig.prodClientAuthorizationConfig(),
-    );
-    RestClientInterceptor restClientInterceptor = RestClientInterceptor(
-      authLocalDataSource: authLocalDataSource,
-    );
+    // AuthLocalDataSource authLocalDataSource = AuthLocalDataSourceImpl(
+    //   authorizationConfig: AuthorizationConfig.prodTraderAuthorizationConfig(),
+    // );
     AuthorizationConfig authorizationConfig;
     if (Platform.isIOS == true) {
       authorizationConfig = AuthorizationConfig.prodIOSTraderAuthorizationConfig();
@@ -138,6 +136,11 @@ class TraderApp extends StatelessWidget {
     if (Platform.isAndroid == true) {
       authorizationConfig = AuthorizationConfig.prodTraderAuthorizationConfig();
     }
+    locatorInit(authorizationConfig);
+    AuthLocalDataSource authLocalDataSource = sl<AuthLocalDataSource>();
+    RestClientInterceptor restClientInterceptor = RestClientInterceptor(
+      authLocalDataSource: authLocalDataSource,
+    );
     AuthenticationDataSource authenticationDataSource = AuthenticationDataSourceImpl(
       authorizationConfig: authorizationConfig,
     );
@@ -278,13 +281,17 @@ class TraderApp extends StatelessWidget {
           BlocProvider(
             create: (context) => JobBloc(
               jobRepository: jobRepository,
+              tagRepository: tagRepository,
+              locationRepository: locationRepository,
               appType: appType,
               authLocalDataSource: authLocalDataSource,
             ),
           ),
           BlocProvider(
             create: (context) => JobFormBloc(
-                jobRepository: jobRepository
+                jobRepository: jobRepository,
+                tagRepository: tagRepository,
+                locationRepository: locationRepository
             ),
           ),
           BlocProvider(
@@ -303,6 +310,12 @@ class TraderApp extends StatelessWidget {
           ),
         ],
         child: TraderApp(),
+        // child: MultiProvider(
+        //   providers: [
+        //     ChangeNotifierProvider(create: (_) => TraderProfile()),
+        //   ],
+        //   child: TraderApp(),
+        // ),
       ),
     );
   }

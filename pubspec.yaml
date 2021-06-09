@@ -34,7 +34,7 @@ dependencies:
   # responsive_builder:
   # device_preview: ^0.5.5
   # uuid: ^3.0.1
-  responsive_framework: 0.0.15
+  responsive_framework: ^0.1.0
   # flutter_svg: any
   # split_view: ^2.0.1
   # google_maps_flutter: ^1.2.0
@@ -48,6 +48,7 @@ dependencies:
   # Local people modules
   local_people_core:
     path: ../local_people_core
+  scoped_model: ^1.1.0
 
 dev_dependencies:
   flutter_test:

@@ -5,16 +5,43 @@ import '../widgets/dashboard_card.dart';
 import 'package:local_people_core/jobs.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:local_people_core/profile.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:after_layout/after_layout.dart';
 
 class TraderHomeScreen extends StatefulWidget {
+  //dynamic profile;
+
   @override
   _TraderHomeScreenState createState() => _TraderHomeScreenState();
 }
 
-class _TraderHomeScreenState extends State<TraderHomeScreen> {
+class _TraderHomeScreenState extends State<TraderHomeScreen> with AfterLayoutMixin<TraderHomeScreen> {
   @override
   void initState() {
     super.initState();
+  }
+
+  void requestPermission() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+      Permission.location,
+      Permission.accessMediaLocation,
+      Permission.photos,
+      Permission.camera,
+      Permission.mediaLibrary,
+    ].request();
+    print(statuses[Permission.storage]);
+    print(statuses[Permission.location]);
+    print(statuses[Permission.accessMediaLocation]);
+    print(statuses[Permission.photos]);
+    print(statuses[Permission.camera]);
+    print(statuses[Permission.mediaLibrary]);
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) async {
+    await requestPermission();
   }
 
   @override
@@ -61,7 +88,7 @@ class _TraderHomeScreenState extends State<TraderHomeScreen> {
           Text(
             title,
             textAlign: TextAlign.left,
-            style: theme.textTheme.bodyText1,
+            style: theme.textTheme.subtitle1,
           ),
         ],
       ),
@@ -69,7 +96,16 @@ class _TraderHomeScreenState extends State<TraderHomeScreen> {
   }
 
   Widget buildBody() { //BuildContext context) {
-    context.read<ProfileBloc>().add(ProfileGetEvent());
+    try {
+      TraderProfile traderProfile = sl<TraderProfile>();
+      if (traderProfile == null)
+        context.read<ProfileBloc>().add(ProfileGetEvent());
+      else {
+        return _buildBodyContent(context);
+      }
+    } catch(e) {
+      context.read<ProfileBloc>().add(ProfileGetEvent());
+    }
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         if (state is ProfileDoesNotExists) {
@@ -82,13 +118,19 @@ class _TraderHomeScreenState extends State<TraderHomeScreen> {
         } else if (state is ProfileLoading) {
           return LoadingWidget();
         } else if (state is ProfileCreated) {
+          locatorAddTraderProfile(state.profile);
           AppRouter.pushPage(context, ProfileScreen(profile: state.profile,));
+          // return ScopedModel<TraderProfile>(
+          //     model: state.profile,
+          //   child: _buildBodyContent(context),
+          // );
           return _buildBodyContent(context);
         } else if (state is ProfileCreateFailed) {
           return ErrorWidget(state.toString());
         } else if (state is ProfileNotLoaded) {
           return ErrorWidget(state.toString());
         } else if (state is TraderProfileLoaded) {
+          locatorAddTraderProfile(state.profile);
           return _buildBodyContent(context);
         }
         return ErrorWidget('Unhandle State $state');
@@ -110,8 +152,8 @@ class _TraderHomeScreenState extends State<TraderHomeScreen> {
           _buildSectionTitle(context, 'Your Next Job'),
           SizedBox(height: 10.0),
           ScheduleNextJobWidget(
-            //jobName: 'Job Name / Description ',
-            //jobAddress: 'Job Address line 1, Job Address line 2,\nPost code ',
+            jobName: 'Job Name / Description ',
+            jobAddress: 'Job Address line 1, Job Address line 2,\nPost code ',
             jobMessage: 'You need to leave in 10 minutes ',
             onPressedNextJob: (String item) {
               AppRouter.pushPage(context, JobScreen());

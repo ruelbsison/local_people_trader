@@ -5,13 +5,17 @@ import 'package:local_people_core/jobs.dart';
 typedef PressedNextJob<T> = void Function(T item);
 
 class ScheduleNextJobWidget extends StatefulWidget {
-  final Job job;
+  //final Job job;
+  final String jobName;
+  final String jobAddress;
   final String jobMessage;
   PressedNextJob<String> onPressedNextJob;
 
   ScheduleNextJobWidget(
       {Key key,
-        this.job,
+        //this.job,
+        this.jobName,
+        this.jobAddress,
       this.jobMessage,
       this.onPressedNextJob})
       : super(key: key);
@@ -26,24 +30,27 @@ class _ScheduleNextJobWidgetState extends State<ScheduleNextJobWidget> {
     final Size size = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
-        AppRouter.pushPage(context, JobDetailScreen(job: widget.job),);
+        //AppRouter.pushPage(context, JobDetailScreen(job: widget.job),);
+        AppRouter.pushPage(context, JobScreen(),);
       },
       child: Card(
-        elevation: 2,
+        //elevation: 2,
         color: Color.fromRGBO(255, 255, 255, 1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: Container(
-          margin: EdgeInsets.all(8.0),
+          //margin: EdgeInsets.all(8.0),
           // decoration: BoxDecoration(
           //   color: Color.fromRGBO(255, 255, 255, 1),
           //   borderRadius: BorderRadius.circular(5.0),
           // ),
           //color: Colors.white,
           //padding: EdgeInsets.all(kDefaultPadding),
-          padding: const EdgeInsets.symmetric(
-              horizontal: kDefaultPadding, vertical: kDefaultPadding * 0.75),
+          margin: EdgeInsets.only(left: 12.0, right: 12.0),
+          padding: EdgeInsets.all(12.0),
+          //padding: const EdgeInsets.symmetric(
+          //    horizontal: kDefaultPadding, vertical: kDefaultPadding * 0.75),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -54,7 +61,7 @@ class _ScheduleNextJobWidgetState extends State<ScheduleNextJobWidget> {
                     child: Text(
                       widget.jobName,
                       textAlign: TextAlign.left,
-                      style: textTheme.bodyText1,
+                      style: textTheme.subtitle1,
                     ),
                   ),
                   Container(
@@ -62,12 +69,7 @@ class _ScheduleNextJobWidgetState extends State<ScheduleNextJobWidget> {
                     child: Center(
                       child: Text(
                         "CONFIRMED",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: "RedHatDisplay",
-                        ),
+                        style: textTheme.overline.copyWith(color: Colors.white,),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -91,7 +93,7 @@ class _ScheduleNextJobWidgetState extends State<ScheduleNextJobWidget> {
               Text(
                 widget.jobMessage.toUpperCase(),
                 textAlign: TextAlign.left,
-                style: textTheme.caption,
+                style: textTheme.bodyText2,
               ),
               SizedBox(height: 10.0),
               ElevatedButton(
@@ -102,15 +104,11 @@ class _ScheduleNextJobWidgetState extends State<ScheduleNextJobWidget> {
                 child: Text(
                   "View Schedule",
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontFamily: 'RedHatDisplay',
-                    color: Color.fromRGBO(255, 255, 255, 1),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: textTheme.button.copyWith(color: Color.fromRGBO(255, 255, 255, 1),),
                 ),
                 onPressed: () {
-                  AppRouter.pushPage(context, JobBidScreen(job: widget.job,));
+                  //AppRouter.pushPage(context, JobBidScreen(job: widget.job,));
+                  AppRouter.pushPage(context, JobScreen());
                 },
               ),
             ],

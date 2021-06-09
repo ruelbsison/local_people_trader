@@ -36,10 +36,10 @@ class _MainScreenState extends State<MainScreen> {
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          selectedItemColor: Theme.of(context).accentColor,
-          unselectedItemColor: Colors.grey[500],
-          elevation: 20,
+          // backgroundColor: Theme.of(context).primaryColor,
+          // selectedItemColor: Theme.of(context).accentColor,
+          // unselectedItemColor: Colors.grey[500],
+          // elevation: 20,
           type: BottomNavigationBarType.fixed,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -47,10 +47,14 @@ class _MainScreenState extends State<MainScreen> {
               //   MaterialIcons.schedule,
               // ),
               icon: SvgPicture.asset(
-                  'packages/local_people_core/assets/images/schedule-icon.svg'
+                  'packages/local_people_core/assets/images/schedule-icon.svg',
+                height: 24,
+                width: 24,
               ),
               activeIcon: SvgPicture.asset(
-                  'packages/local_people_core/assets/images/schedule-active-icon.svg'
+                  'packages/local_people_core/assets/images/schedule-active-icon.svg',
+                height: 24,
+                width: 24,
               ),
               label: LocalPeopleLocalizations.of(context).menuTitleSchedule,
             ),
@@ -59,10 +63,14 @@ class _MainScreenState extends State<MainScreen> {
               //   MaterialIcons.work,
               // ),
               icon: SvgPicture.asset(
-                  'packages/local_people_core/assets/images/opportunities-icon.svg'
+                  'packages/local_people_core/assets/images/opportunities-icon.svg',
+                height: 24,
+                width: 24,
               ),
               activeIcon: SvgPicture.asset(
-                  'packages/local_people_core/assets/images/opportunities-active-icon.svg'
+                  'packages/local_people_core/assets/images/opportunities-active-icon.svg',
+                height: 24,
+                width: 24,
               ),
               label: LocalPeopleLocalizations.of(context).menuTitleOpportunities,
             ),
@@ -71,22 +79,30 @@ class _MainScreenState extends State<MainScreen> {
               //   MaterialIcons.search,
               // ),
               icon: SvgPicture.asset(
-                  'packages/local_people_core/assets/images/search-icon.svg'
+                'packages/local_people_core/assets/images/your-job-icon.svg',
+                height: 24,
+                width: 24,
               ),
               activeIcon: SvgPicture.asset(
-                  'packages/local_people_core/assets/images/search-active-icon.svg'
+                'packages/local_people_core/assets/images/your-job-active-icon.svg',
+                height: 24,
+                width: 24,
               ),
-              label: LocalPeopleLocalizations.of(context).menuTitleSearch,
+              label: LocalPeopleLocalizations.of(context).menuTitleJobs,
             ),
             BottomNavigationBarItem(
               // icon: Icon(
               //   MaterialIcons.message,
               // ),
               icon: SvgPicture.asset(
-                  'packages/local_people_core/assets/images/messages-icon.svg'
+                  'packages/local_people_core/assets/images/messages-icon.svg',
+                height: 24,
+                width: 24,
               ),
               activeIcon: SvgPicture.asset(
-                  'packages/local_people_core/assets/images/messages-active-icon.svg'
+                  'packages/local_people_core/assets/images/messages-active-icon.svg',
+                height: 24,
+                width: 24,
               ),
               label: LocalPeopleLocalizations.of(context).menuTitleMessages,
             ),
@@ -94,11 +110,18 @@ class _MainScreenState extends State<MainScreen> {
               // icon: Icon(
               //   MaterialIcons.menu,
               // ),
+              // activeIcon: Icon(
+              //   MaterialIcons.menu,
+              // ),
               icon: SvgPicture.asset(
-                  'packages/local_people_core/assets/images/more-icon.svg'
+                  'packages/local_people_core/assets/images/more-icon.svg',
+                height: 24,
+                width: 24,
               ),
               activeIcon: SvgPicture.asset(
-                  'packages/local_people_core/assets/images/more-active-icon.svg'
+                  'packages/local_people_core/assets/images/more-active-icon.svg',
+                height: 24,
+                width: 24,
               ),
               label: LocalPeopleLocalizations.of(context).menuTitleMore,
             ),
