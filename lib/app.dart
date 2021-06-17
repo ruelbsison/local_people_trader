@@ -14,6 +14,7 @@ import 'package:local_people_core/auth.dart';
 import 'package:local_people_core/profile.dart';
 import 'package:local_people_core/jobs.dart';
 import 'package:local_people_core/messages.dart';
+import 'package:local_people_core/quote.dart';
 import './ui/views/main_screen.dart';
 import 'ui/router.dart';
 import'dart:io' show Platform;
@@ -21,7 +22,8 @@ import'dart:io' show Platform;
 class TraderApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return DialogManager(
+        child: MaterialApp(
       title: AppLocalizations().clientAppTitle,
       theme: AppThemeConfig().kLocalPeopleClientTheme, //themeData(Theme.of(context), AppThemeConfig.clientTheme),
       darkTheme: AppThemeConfig().kLocalPeopleTraderTheme, //themeData(Theme.of(context), AppThemeConfig.lightTheme),
@@ -85,7 +87,7 @@ class TraderApp extends StatelessWidget {
         ],
         //mediaQueryData: MediaQueryData(size: Size(375, 812), devicePixelRatio: 3),
       ),
-    );
+    ));
   }
 
   // Apply font to our app's theme
@@ -196,6 +198,46 @@ class TraderApp extends StatelessWidget {
       messageRestApiClient: messageRestApiClient,
     );
 
+    QualificationRestApiClient qualificationRestApiClient = QualificationRestApiClient(
+      restClientInterceptor.dio,
+      baseUrl: RestAPIConfig().baseURL,
+    );
+    QualificationRemoteDataSource qualificationRemoteDataSource = QualificationRemoteDataSourceImpl(
+      qualificationRestApiClient: qualificationRestApiClient,
+    );
+
+    PackageRestApiClient packageRestApiClient = PackageRestApiClient(
+      restClientInterceptor.dio,
+      baseUrl: RestAPIConfig().baseURL,
+    );
+    PackageRemoteDataSource packageRemoteDataSource = PackageRemoteDataSourceImpl(
+      packageRestApiClient: packageRestApiClient,
+    );
+
+    BookingRestApiClient bookingRestApiClient = BookingRestApiClient(
+      restClientInterceptor.dio,
+      baseUrl: RestAPIConfig().baseURL,
+    );
+    BookingRemoteDataSource bookingRemoteDataSource = BookingRemoteDataSourceImpl(
+      bookingRestApiClient: bookingRestApiClient,
+    );
+
+    QuoteRestApiClient quoteRestApiClient = QuoteRestApiClient(
+      restClientInterceptor.dio,
+      baseUrl: RestAPIConfig().baseURL,
+    );
+    QuoteRemoteDataSource quoteRemoteDataSource = QuoteRemoteDataSourceImpl(
+      quoteRestApiClient: quoteRestApiClient,
+    );
+
+    QuoteRequestRestApiClient quoteRequestRestApiClient = QuoteRequestRestApiClient(
+      restClientInterceptor.dio,
+      baseUrl: RestAPIConfig().baseURL,
+    );
+    QuoteRequestRemoteDataSource quoteRequestRemoteDataSource = QuoteRequestRemoteDataSourceImpl(
+      quoteRequestRestApiClient: quoteRequestRestApiClient,
+    );
+
     final AuthenticationRepository authenticationRepository =
     AuthenticationRepositoryImpl(
       networkInfo: networkInfo,
@@ -228,6 +270,31 @@ class TraderApp extends StatelessWidget {
       messageRemoteDataSource: messageRemoteDataSource,
     );
 
+    final QualificationRepository qualificationRepository = QualificationRepositoryImpl(
+      networkInfo: networkInfo,
+      qualificationRemoteDataSource: qualificationRemoteDataSource,
+    );
+
+    final PackageRepository packageRepository = PackageRepositoryImpl(
+      networkInfo: networkInfo,
+      packageRemoteDataSource: packageRemoteDataSource,
+    );
+
+    final BookingRepository bookingRepository = BookingRepositoryImpl(
+      networkInfo: networkInfo,
+      bookingRemoteDataSource: bookingRemoteDataSource,
+    );
+
+    final QuoteRepository quoteRepository = QuoteRepositoryImpl(
+      networkInfo: networkInfo,
+      quoteRemoteDataSource: quoteRemoteDataSource,
+    );
+
+    final QuoteRequestRepository quoteRequestRepository = QuoteRequestRepositoryImpl(
+      networkInfo: networkInfo,
+      quoteRemoteDataSource: quoteRequestRemoteDataSource,
+    );
+
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthenticationRepository>(
@@ -248,6 +315,21 @@ class TraderApp extends StatelessWidget {
         RepositoryProvider<MessageRepository>(
           create: (context) => messageRepository,
         ),
+        RepositoryProvider<QualificationRepository>(
+          create: (context) => qualificationRepository,
+        ),
+        RepositoryProvider<PackageRepository>(
+          create: (context) => packageRepository,
+        ),
+        RepositoryProvider<BookingRepository>(
+          create: (context) => bookingRepository,
+        ),
+        RepositoryProvider<QuoteRepository>(
+          create: (context) => quoteRepository,
+        ),
+        RepositoryProvider<QuoteRequestRepository>(
+          create: (context) => quoteRequestRepository,
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -266,6 +348,7 @@ class TraderApp extends StatelessWidget {
               profileRepository: profileRepository,
               appType: appType,
               authLocalDataSource: authLocalDataSource,
+              qualificationRepository: qualificationRepository
             ),
           ),
           BlocProvider(
@@ -291,7 +374,7 @@ class TraderApp extends StatelessWidget {
             create: (context) => JobFormBloc(
                 jobRepository: jobRepository,
                 tagRepository: tagRepository,
-                locationRepository: locationRepository
+                locationRepository: locationRepository,
             ),
           ),
           BlocProvider(
@@ -308,6 +391,35 @@ class TraderApp extends StatelessWidget {
               authLocalDataSource: authLocalDataSource,
             ),
           ),
+          BlocProvider(
+            create: (context) => QualificationBloc(
+              qualificationRepository: qualificationRepository,
+              authLocalDataSource: authLocalDataSource,
+            ),
+          ),
+          BlocProvider(
+            create: (context) => PackageBloc(
+              packageRepository: packageRepository,
+            ),
+          ),
+          // BlocProvider(
+          //   create: (context) => BookingBloc(
+          //     bookingRepository: bookingRepository,
+          //   ),
+          // ),
+          BlocProvider(
+            create: (context) => QuoteBloc(
+              quoteRepository: quoteRepository,
+              profileRepository: profileRepository,
+              jobRepository: jobRepository,
+              authLocalDataSource: authLocalDataSource,
+            ),
+          ),
+          BlocProvider(
+            create: (context) => QuoteRequestBloc(
+              quoteRequestRepository: quoteRequestRepository,
+            ),
+          ),
         ],
         child: TraderApp(),
         // child: MultiProvider(
@@ -320,3 +432,5 @@ class TraderApp extends StatelessWidget {
     );
   }
 }
+
+
