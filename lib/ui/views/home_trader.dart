@@ -10,7 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:after_layout/after_layout.dart';
 
 class TraderHomeScreen extends StatefulWidget {
-  //dynamic profile;
+  TraderProfile profile;
 
   @override
   _TraderHomeScreenState createState() => _TraderHomeScreenState();
@@ -49,7 +49,10 @@ class _TraderHomeScreenState extends State<TraderHomeScreen> with AfterLayoutMix
     final headline6Style = Theme.of(context).textTheme.headline6;
     return Scaffold(
       appBar: buildAppBar(),
-      body: buildBody(),
+      body: BlocProvider.value(
+        value: BlocProvider.of<ProfileBloc>(context),
+        child: buildBody(),
+      ),
     );
   }
 
@@ -106,36 +109,114 @@ class _TraderHomeScreenState extends State<TraderHomeScreen> with AfterLayoutMix
     } catch(e) {
       context.read<ProfileBloc>().add(ProfileGetEvent());
     }
-    return BlocBuilder<ProfileBloc, ProfileState>(
-      builder: (context, state) {
-        if (state is ProfileDoesNotExists) {
-          context.read<ProfileBloc>().add(ProfileCreateEvent());
-          return LoadingWidget();
-        } else if (state is ProfileInitialState) {
-          return LoadingWidget();
-        } else if (state is ProfileCreating) {
-          return LoadingWidget();
-        } else if (state is ProfileLoading) {
-          return LoadingWidget();
-        } else if (state is ProfileCreated) {
-          locatorAddTraderProfile(state.profile);
-          AppRouter.pushPage(context, ProfileScreen(profile: state.profile,));
-          // return ScopedModel<TraderProfile>(
-          //     model: state.profile,
-          //   child: _buildBodyContent(context),
-          // );
-          return _buildBodyContent(context);
-        } else if (state is ProfileCreateFailed) {
-          return ErrorWidget(state.toString());
-        } else if (state is ProfileNotLoaded) {
-          return ErrorWidget(state.toString());
-        } else if (state is TraderProfileLoaded) {
-          locatorAddTraderProfile(state.profile);
-          return _buildBodyContent(context);
-        }
-        return ErrorWidget('Unhandle State $state');
-      },
-    );
+    return BlocConsumer<ProfileBloc, ProfileState>(
+        listenWhen: (previous, current) {
+          // return true/false to determine whether or not
+          // to invoke listener with state
+          print('listenWhen: previous is $previous, current is $current');
+
+          if (previous is ProfileLoading && current is ProfileDoesNotExists) {
+            return true;
+          } else if (previous is ProfileCreating && current is ProfileCreated) {
+            return true;
+          } else if (previous is ProfileLoading && current is TraderProfileLoaded) {
+            return true;
+          }
+          return false;
+        }, listener: (context, state) {
+      // do stuff here based on BlocA's state
+      print('listener: current is $state');
+
+      if (state is ProfileCreated) {
+        locatorAddTraderProfile(state.profile);
+        widget.profile = state.profile;
+        AppRouter.pushPage(
+            context,
+            ProfileScreen(
+              profile: widget.profile,
+            ));
+      } else if (state is ProfileDoesNotExists) {
+        context.read<ProfileBloc>().add(ProfileCreateEvent());
+      } else if (state is TraderProfileLoaded) {
+        locatorAddTraderProfile(state.profile);
+        widget.profile = state.profile;
+      }
+    }, buildWhen: (previous, current) {
+      // return true/false to determine whether or not
+      // to rebuild the widget with state
+      print('buildWhen: previous is $previous, current is $current');
+      if (previous is ProfileInitialState && current is ProfileLoading) {
+        return true;
+      } else if (previous is ProfileLoading && current is ProfileNotLoaded) {
+        return true;
+      } else if (previous is ProfileCreating &&
+          current is ProfileCreateFailed) {
+        return true;
+      } else if (previous is ClientProfileGetLoading &&
+          current is ClientProfileGetFailed) {
+        return true;
+      } else if (previous is ProfileTraderTopRatedLoading &&
+          current is ProfileTraderTopRatedFailed) {
+        return true;
+      } else if (previous is ProfileTraderTopRatedLoading &&
+          current is ProfileTraderTopRatedCompleted) {
+        return true;
+      } else  if (previous is ProfileLoading && current is ProfileDoesNotExists) {
+        return false;
+      } else if (previous is ProfileCreating && current is ProfileCreated) {
+        return true;
+      } else if (previous is ProfileLoading && current is TraderProfileLoaded) {
+        return true;
+      }
+      return false;
+    }, builder: (context, state) {
+      // return widget here based on BlocA's state
+      print('builder: current is $state');
+      if (state is ProfileTraderTopRatedFailed ||
+          state is ClientProfileGetFailed ||
+          state is ProfileCreateFailed ||
+          state is ProfileNotLoaded ||
+          state is ClientProfileUpdateFailed ||
+          state is TraderProfileUpdateFailed ||
+          state is TraderProfileGetFailed) {
+        return ErrorWidget('Error: $state');
+      } else if (state is ProfileCreated) {
+        return _buildBodyContent(context);
+      }else if (state is TraderProfileLoaded) {
+        return _buildBodyContent(context);
+      }
+      return LoadingWidget();
+    });
+    // return BlocBuilder<ProfileBloc, ProfileState>(
+    //   builder: (context, state) {
+    //     if (state is ProfileDoesNotExists) {
+    //       context.read<ProfileBloc>().add(ProfileCreateEvent());
+    //       return LoadingWidget();
+    //     } else if (state is ProfileInitialState) {
+    //       return LoadingWidget();
+    //     } else if (state is ProfileCreating) {
+    //       return LoadingWidget();
+    //     } else if (state is ProfileLoading) {
+    //       return LoadingWidget();
+    //     } else if (state is ProfileCreated) {
+    //       locatorAddTraderProfile(state.profile);
+    //       AppRouter.pushPage(context, ProfileScreen(profile: state.profile,));
+    //       // return ScopedModel<TraderProfile>(
+    //       //     model: state.profile,
+    //       //   child: _buildBodyContent(context),
+    //       // );
+    //       return _buildBodyContent(context);
+    //     } else if (state is ProfileCreateFailed) {
+    //       return ErrorWidget(state.toString());
+    //     } else if (state is ProfileNotLoaded) {
+    //       return ErrorWidget(state.toString());
+    //     } else if (state is TraderProfileLoaded) {
+    //       locatorAddTraderProfile(state.profile);
+    //       return _buildBodyContent(context);
+    //     }
+    //     return ErrorWidget('Unhandle State $state');
+    //   },
+    // );
   }
 
   Widget _buildBodyContent(BuildContext context) {
