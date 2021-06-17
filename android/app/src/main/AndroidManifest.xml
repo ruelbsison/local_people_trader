@@ -29,6 +29,9 @@
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:icon="@mipmap/app_icon">
+       <meta-data
+           android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyALfpwS_HPXhQbBRsq7QgOOHqYaj2F4ZnI" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
