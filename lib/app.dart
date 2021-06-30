@@ -18,76 +18,102 @@ import 'package:local_people_core/quote.dart';
 import './ui/views/main_screen.dart';
 import 'ui/router.dart';
 import'dart:io' show Platform;
+//import 'package:sizer/sizer.dart';
 
 class TraderApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return DialogManager(
-        child: MaterialApp(
-      title: AppLocalizations().clientAppTitle,
-      theme: AppThemeConfig().kLocalPeopleClientTheme, //themeData(Theme.of(context), AppThemeConfig.clientTheme),
-      darkTheme: AppThemeConfig().kLocalPeopleTraderTheme, //themeData(Theme.of(context), AppThemeConfig.lightTheme),
-      themeMode: ThemeMode.dark,
-      //fontFamily: 'RedHatDisplay',
-      localizationsDelegates: [
-        LocalPeopleLocalizationsDelegate(),
-        AppLocalizationsDelegate(),
-      ],
-      supportedLocales: [
-        const Locale('en', ''), // English
-      ],
-      debugShowCheckedModeBanner: false,
-      onGenerateRoute: TraderAppRouter.generateRoute,
-      /*home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-          if (state is Uninitialized) {
-            return LoginScreen();
-          } else if (state is Unauthenticated) {
-            return MainScreen();
-          } else if (state is Authenticated) {
-            return MainScreen();
-          }
-          return Container(
-            child: Center(child: Text('Unhandle State $state')),
-          );
-        },
-      ),*/
-      home: ResponsiveWrapper.builder(
-        BlocBuilder<AuthenticationBloc, AuthenticationState>(
-          builder: (context, state) {
-            if (state is Uninitialized) {
-              return LoginScreen();
-            } else if (state is Unauthenticated) {
-              context.read<AuthenticationBloc>().add(AuthenticateUser());
-              return LoginScreen();
-            } else if (state is ReAuthenticate) {
-              context.read<AuthenticationBloc>().add(ReAuthenticateUser());
-              return LoginScreen();
-            } else if (state is Authenticated) {
-              return MainScreen();
-            }
-            return Container(
-              child: Center(child: Text('Unhandle State $state')),
-            );
-          },
-        ),
-        defaultScale: true,
-        //maxWidth: 896,
-        //minWidth: 414,
-        //maxWidth: 812,
-        //minWidth: 375,
-        maxWidth: 2436,
-        minWidth: 1125,
-        defaultName: MOBILE,
-        breakpoints: [
-          ResponsiveBreakpoint.autoScale(375, name: MOBILE),
-          ResponsiveBreakpoint.autoScale(600, name: MOBILE),
-          ResponsiveBreakpoint.resize(850, name: TABLET),
-          ResponsiveBreakpoint.resize(1080, name: DESKTOP),
-        ],
-        //mediaQueryData: MediaQueryData(size: Size(375, 812), devicePixelRatio: 3),
-      ),
-    ));
+      // return LayoutBuilder(                           //return LayoutBuilder
+      //     builder: (context, constraints)
+      // {
+      //   return OrientationBuilder( //return OrientationBuilder
+      //       builder: (context, orientation) {
+      //         // SizerUtil.deviceType = DeviceType.mobile;
+      //         // SizerUtil.orientation = orientation;
+      //         // SizerUtil.boxConstraints = constraints;
+      //         // return Sizer(
+      //         //     builder: (context, orientation, deviceType)
+      //         //     {
+              return DialogManager(
+                child: MaterialApp(
+                  title: AppLocalizations().traderAppTitle,
+                  theme: AppThemeConfig().kLocalPeopleTraderTheme,
+                  //themeData(Theme.of(context), AppThemeConfig.clientTheme),
+                  darkTheme: AppThemeConfig().kLocalPeopleClientTheme,
+                  //themeData(Theme.of(context), AppThemeConfig.lightTheme),
+                  themeMode: ThemeMode.light,
+                  //fontFamily: 'RedHatDisplay',
+                  localizationsDelegates: [
+                    LocalPeopleLocalizationsDelegate(),
+                    AppLocalizationsDelegate(),
+                  ],
+                  supportedLocales: [
+                    const Locale('en', ''), // English
+                  ],
+                  debugShowCheckedModeBanner: false,
+                  onGenerateRoute: TraderAppRouter.generateRoute,
+                  /*home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                    builder: (context, state) {
+                      if (state is Uninitialized) {
+                        return LoginScreen();
+                      } else if (state is Unauthenticated) {
+                        return MainScreen();
+                      } else if (state is Authenticated) {
+                        return MainScreen();
+                      }
+                      return Container(
+                        child: Center(child: Text('Unhandle State $state')),
+                      );
+                    },
+                  ),*/
+                  home: ResponsiveWrapper.builder(
+                    BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                      builder: (context, state) {
+                        if (state is Uninitialized) {
+                          return LoginScreen();
+                        } else if (state is Unauthenticated) {
+                          context.read<AuthenticationBloc>().add(
+                              AuthenticateUser());
+                          return LoginScreen();
+                        } else if (state is ReAuthenticate) {
+                          context.read<AuthenticationBloc>().add(
+                              ReAuthenticateUser());
+                          return LoginScreen();
+                        } else if (state is Authenticated) {
+                          return MainScreen();
+                        } else if (state is AuthenticationError) {
+                          return ErrorWidget(state.toString());
+                        } else if (state is AuthenticationError) {
+                          context.read<AuthenticationBloc>().add(
+                              AuthenticateUser());
+                          return LoginScreen();
+                        }
+                        return Container(
+                          child: Center(child: Text('Unhandle State $state')),
+                        );
+                      },
+                    ),
+                    defaultScale: false,
+                    //maxWidth: 896,
+                    //minWidth: 414,
+                    maxWidth: 812,
+                    minWidth: 375,
+                    //maxWidth: 2436,
+                    //minWidth: 1125,
+                    defaultName: MOBILE,
+                    breakpoints: [
+                      ResponsiveBreakpoint.autoScale(375, name: MOBILE),
+                      ResponsiveBreakpoint.autoScale(600, name: MOBILE),
+                      ResponsiveBreakpoint.resize(850, name: TABLET),
+                      ResponsiveBreakpoint.resize(1080, name: DESKTOP),
+                    ],
+                    //mediaQueryData: MediaQueryData(size: Size(375, 812), devicePixelRatio: 3),
+                  ),
+                ),
+              );
+            //});
+      //});
+    //});
   }
 
   // Apply font to our app's theme
@@ -142,6 +168,7 @@ class TraderApp extends StatelessWidget {
     AuthLocalDataSource authLocalDataSource = sl<AuthLocalDataSource>();
     RestClientInterceptor restClientInterceptor = RestClientInterceptor(
       authLocalDataSource: authLocalDataSource,
+      baseURL: RestAPIConfig().baseURL,
     );
     AuthenticationDataSource authenticationDataSource = AuthenticationDataSourceImpl(
       authorizationConfig: authorizationConfig,
@@ -348,7 +375,8 @@ class TraderApp extends StatelessWidget {
               profileRepository: profileRepository,
               appType: appType,
               authLocalDataSource: authLocalDataSource,
-              qualificationRepository: qualificationRepository
+              qualificationRepository: qualificationRepository,
+              packageRepository: packageRepository,
             ),
           ),
           BlocProvider(
@@ -366,8 +394,12 @@ class TraderApp extends StatelessWidget {
               jobRepository: jobRepository,
               tagRepository: tagRepository,
               locationRepository: locationRepository,
+              quoteRepository: quoteRepository,
+              quoteRequestRepository: quoteRequestRepository,
+              //packageRepository: packageRepository,
               appType: appType,
               authLocalDataSource: authLocalDataSource,
+              bookingRepository: bookingRepository,
             ),
           ),
           BlocProvider(
@@ -402,16 +434,16 @@ class TraderApp extends StatelessWidget {
               packageRepository: packageRepository,
             ),
           ),
-          // BlocProvider(
-          //   create: (context) => BookingBloc(
-          //     bookingRepository: bookingRepository,
-          //   ),
-          // ),
+          BlocProvider(
+            create: (context) => BookingBloc(
+              bookingRepository: bookingRepository,
+            ),
+          ),
           BlocProvider(
             create: (context) => QuoteBloc(
               quoteRepository: quoteRepository,
-              profileRepository: profileRepository,
-              jobRepository: jobRepository,
+              //profileRepository: profileRepository,
+              //jobRepository: jobRepository,
               authLocalDataSource: authLocalDataSource,
             ),
           ),

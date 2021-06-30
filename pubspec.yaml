@@ -48,6 +48,8 @@ dependencies:
   # Local people modules
   local_people_core:
     path: ../local_people_core
+  local_people_schedule:
+    path: ../local_people_schedule
   scoped_model: ^1.1.0
 
 dev_dependencies:

@@ -6,9 +6,7 @@ class OpportunitiesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBarWidget(
-          title: Text(
-            AppLocalizations.of(context).appTitle,
-          ),
+          title: AppLocalizations.of(context).appTitle,
           appBar: AppBar(),
         )
     );

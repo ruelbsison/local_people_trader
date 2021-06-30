@@ -58,10 +58,8 @@ class _TraderHomeScreenState extends State<TraderHomeScreen> with AfterLayoutMix
 
   AppBarWidget buildAppBar() {
     return AppBarWidget(
-      //appBarPreferredSize: Size.fromHeight(188.0),
-      title: Text(
-        AppLocalizations.of(context).appTitle,
-      ),
+      appBarPreferredSize: Size.fromHeight(120.0),
+      title: AppLocalizations.of(context).appTitle,
       subTitle: DateFormatUtil.getFormattedDate(),
       appBar: AppBar(),
       bottom: PreferredSize(

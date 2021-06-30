@@ -7,10 +7,7 @@ class MessageScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBarWidget(
         appBarPreferredSize: Size.fromHeight(80.0),
-        title: Text(
-          AppLocalizations.of(context).appTitle,
-        ),
-        subTitle: LocalPeopleLocalizations.of(context).menuTitleMessages,
+        title: LocalPeopleLocalizations.of(context).menuTitleMessages,
         appBar: AppBar(),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
