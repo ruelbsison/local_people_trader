@@ -265,6 +265,14 @@ class TraderApp extends StatelessWidget {
       quoteRequestRestApiClient: quoteRequestRestApiClient,
     );
 
+    ChangeRequestRestApiClient changeRequestRestApiClient = ChangeRequestRestApiClient(
+      restClientInterceptor.dio,
+      baseUrl: RestAPIConfig().baseURL,
+    );
+    ChangeRequestRemoteDataSource changeRequestRemoteDataSource = ChangeRequestRemoteDataSourceImpl(
+        changeRequestRestApiClient: changeRequestRestApiClient
+    );
+
     final AuthenticationRepository authenticationRepository =
     AuthenticationRepositoryImpl(
       networkInfo: networkInfo,
@@ -322,6 +330,11 @@ class TraderApp extends StatelessWidget {
       quoteRemoteDataSource: quoteRequestRemoteDataSource,
     );
 
+    final ChangeRequestRepository changeRequestRepository = ChangeRequestRepositoryImpl(
+        networkInfo: networkInfo,
+        changeRequestRemoteDataSource: changeRequestRemoteDataSource
+    );
+
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthenticationRepository>(
@@ -356,6 +369,9 @@ class TraderApp extends StatelessWidget {
         ),
         RepositoryProvider<QuoteRequestRepository>(
           create: (context) => quoteRequestRepository,
+        ),
+        RepositoryProvider<ChangeRequestRepository>(
+          create: (context) => changeRequestRepository,
         ),
       ],
       child: MultiBlocProvider(
@@ -400,6 +416,7 @@ class TraderApp extends StatelessWidget {
               appType: appType,
               authLocalDataSource: authLocalDataSource,
               bookingRepository: bookingRepository,
+              changeRequestRepository: changeRequestRepository,
             ),
           ),
           BlocProvider(
@@ -450,6 +467,11 @@ class TraderApp extends StatelessWidget {
           BlocProvider(
             create: (context) => QuoteRequestBloc(
               quoteRequestRepository: quoteRequestRepository,
+            ),
+          ),
+          BlocProvider(
+            create: (context) => ChangeRequestBloc(
+              changeRequestRepository: changeRequestRepository,
             ),
           ),
         ],
